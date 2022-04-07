@@ -21,23 +21,23 @@ impl<'r, Repo: TaskRepository> Controller<'r, Repo> {
         });
 
         self.usecase
-            .get_task_list(&filter)
+            .get_task_list(filter)
             .map(|tasks| tasks.into_iter().map(|task| task.into()).collect())
     }
 
     pub fn add_task(&self, body: &str) -> Result<(), String> {
         let body = TaskBody::from_str(body)?;
         let task = Task::new(body);
-        self.usecase.add_task(&task)
+        self.usecase.add_task(task)
     }
 
     pub fn delete_task(&self, id: &str) -> Result<(), String> {
         let id = TaskId::from_str(id)?;
-        self.usecase.delete_task(&id)
+        self.usecase.delete_task(id)
     }
 
     pub fn update_task(&self, task: TaskDto) -> Result<(), String> {
         let task = Task::try_from(task)?;
-        self.usecase.update_task(&task)
+        self.usecase.update_task(task)
     }
 }

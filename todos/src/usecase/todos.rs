@@ -8,19 +8,19 @@ impl<'r, Repo: TaskRepository> UseCase<'r, Repo> {
         Self { repository }
     }
 
-    pub fn get_task_list(&self, filter: &TaskFilter) -> Result<Vec<Task>, String> {
+    pub fn get_task_list(&self, filter: TaskFilter) -> Result<Vec<Task>, String> {
         self.repository.list(filter)
     }
 
-    pub fn add_task(&self, task: &Task) -> Result<(), String> {
+    pub fn add_task(&self, task: Task) -> Result<(), String> {
         self.repository.insert(task)
     }
 
-    pub fn delete_task(&self, id: &TaskId) -> Result<(), String> {
+    pub fn delete_task(&self, id: TaskId) -> Result<(), String> {
         self.repository.delete(id)
     }
 
-    pub fn update_task(&self, task: &Task) -> Result<(), String> {
+    pub fn update_task(&self, task: Task) -> Result<(), String> {
         self.repository.update(task)
     }
 }
