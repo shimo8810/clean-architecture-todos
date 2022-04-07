@@ -2,13 +2,15 @@ use super::{TaskBody, TaskId, TaskState};
 
 #[derive(Debug, PartialEq)]
 pub struct Task {
-    id: TaskId,
-    state: TaskState,
-    body: TaskBody,
+    pub id: TaskId,
+    pub state: TaskState,
+    pub body: TaskBody,
 }
 
 impl Task {
-    pub fn new(id: TaskId, state: TaskState, body: TaskBody) -> Self {
+    pub fn new(body: TaskBody) -> Self {
+        let id = TaskId::new();
+        let state = TaskState::Active;
         Self { id, state, body }
     }
 }
@@ -23,8 +25,7 @@ mod tests {
         let state = TaskState::Active;
         let body = TaskBody::new("body").unwrap();
 
-        let task = Task::new(id, state, body);
-        assert_eq!(task.id, TaskId::default());
+        let task = Task::new(body);
         assert_eq!(task.state, TaskState::Active);
         assert_eq!(task.body, TaskBody::new("body").unwrap());
     }
