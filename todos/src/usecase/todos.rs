@@ -16,7 +16,7 @@ impl<'r, Repo: TaskRepository> UseCase<'r, Repo> {
         self.repository.insert(task)
     }
 
-    pub fn delete(&self, id: &TaskId) -> Result<(), String> {
+    pub fn delete_task(&self, id: &TaskId) -> Result<(), String> {
         self.repository.delete(id)
     }
 
