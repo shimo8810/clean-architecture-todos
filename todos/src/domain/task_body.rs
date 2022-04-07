@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 const MAX_LENGTH: usize = 140;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct TaskBody(String);
 
 impl TaskBody {

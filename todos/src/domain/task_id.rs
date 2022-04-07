@@ -2,7 +2,7 @@ use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Clone)]
 pub struct TaskId(Uuid);
 
 impl TaskId {
