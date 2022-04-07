@@ -25,7 +25,8 @@ mod tests {
         let state = TaskState::Active;
         let body = TaskBody::new("body").unwrap();
 
-        let task = Task::new(body);
+        let task = Task { id, state, body };
+        assert_eq!(task.id, TaskId::default());
         assert_eq!(task.state, TaskState::Active);
         assert_eq!(task.body, TaskBody::new("body").unwrap());
     }
