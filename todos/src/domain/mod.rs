@@ -1,3 +1,4 @@
+pub mod repository;
 pub mod task;
 pub mod task_body;
 pub mod task_id;
