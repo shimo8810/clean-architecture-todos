@@ -1,6 +1,7 @@
 use crate::domain::{Task, TaskBody, TaskId, TaskState};
 use std::str::FromStr;
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct TaskDto {
     pub id: String,
     pub state: String,
