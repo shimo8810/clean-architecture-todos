@@ -1,10 +1,11 @@
 use crate::domain::{Task, TaskFilter, TaskId, TaskRepository};
-pub struct UseCase<'r, Repo: TaskRepository> {
-    repository: &'r Repo,
+
+pub struct UseCase<Repo: TaskRepository> {
+    repository: Repo,
 }
 
-impl<'r, Repo: TaskRepository> UseCase<'r, Repo> {
-    pub fn new(repository: &'r Repo) -> Self {
+impl<Repo: TaskRepository> UseCase<Repo> {
+    pub fn new(repository: Repo) -> Self {
         Self { repository }
     }
 
@@ -12,15 +13,15 @@ impl<'r, Repo: TaskRepository> UseCase<'r, Repo> {
         self.repository.list(filter)
     }
 
-    pub fn add_task(&self, task: Task) -> Result<(), String> {
+    pub fn add_task(&mut self, task: Task) -> Result<(), String> {
         self.repository.insert(task)
     }
 
-    pub fn delete_task(&self, id: TaskId) -> Result<(), String> {
+    pub fn delete_task(&mut self, id: TaskId) -> Result<(), String> {
         self.repository.delete(id)
     }
 
-    pub fn update_task(&self, task: Task) -> Result<(), String> {
+    pub fn update_task(&mut self, task: Task) -> Result<(), String> {
         self.repository.update(task)
     }
 }

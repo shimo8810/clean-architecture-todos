@@ -1,20 +1,23 @@
 use crate::domain::{Task, TaskBody, TaskFilter, TaskId, TaskRepository, TaskState};
-use crate::interface_adapter::dto::TaskDto;
+use crate::interface_adapter::request::{
+    AddTaskRequest, DeleteTaskRequest, GetTaskRequest, UpdateTaskRequest,
+};
+use crate::interface_adapter::response::TaskResponse;
 use crate::usecase::todos::UseCase;
 use std::str::FromStr;
-
-pub struct Controller<'r, Repo: TaskRepository> {
-    usecase: UseCase<'r, Repo>,
+pub struct Controller<Repo: TaskRepository> {
+    usecase: UseCase<Repo>,
 }
 
-impl<'r, Repo: TaskRepository> Controller<'r, Repo> {
-    pub fn new(repository: &'r Repo) -> Self {
+impl<Repo: TaskRepository> Controller<Repo> {
+    pub fn new(repository: Repo) -> Self {
         let usecase = UseCase::new(repository);
         Self { usecase }
     }
 
-    pub fn get_task_list(&self, filter: Option<&str>) -> Result<Vec<TaskDto>, String> {
-        let filter = filter.map_or(TaskFilter::All, |s| match s {
+    pub fn get_task_list(&self, req: GetTaskRequest) -> Result<Vec<TaskResponse>, String> {
+        let filter = req.filter;
+        let filter = filter.map_or(TaskFilter::All, |s| match &*s {
             "Active" => TaskFilter::StateEq(TaskState::Active),
             "Completed" => TaskFilter::StateEq(TaskState::Active),
             _ => TaskFilter::All,
@@ -25,19 +28,22 @@ impl<'r, Repo: TaskRepository> Controller<'r, Repo> {
             .map(|tasks| tasks.into_iter().map(|task| task.into()).collect())
     }
 
-    pub fn add_task(&self, body: &str) -> Result<(), String> {
-        let body = TaskBody::from_str(body)?;
+    pub fn add_task(&mut self, req: AddTaskRequest) -> Result<(), String> {
+        let body = TaskBody::from_str(&req.body)?;
         let task = Task::new(body);
         self.usecase.add_task(task)
     }
 
-    pub fn delete_task(&self, id: &str) -> Result<(), String> {
-        let id = TaskId::from_str(id)?;
+    pub fn delete_task(&mut self, req: DeleteTaskRequest) -> Result<(), String> {
+        let id = TaskId::from_str(&req.id)?;
         self.usecase.delete_task(id)
     }
 
-    pub fn update_task(&self, task: TaskDto) -> Result<(), String> {
-        let task = Task::try_from(task)?;
+    pub fn update_task(&mut self, req: UpdateTaskRequest) -> Result<(), String> {
+        let id = TaskId::from_str(&req.id)?;
+        let body = TaskBody::from_str(&req.body)?;
+        let state = TaskState::from_str(&req.state)?;
+        let task = Task { id, state, body };
         self.usecase.update_task(task)
     }
 }
