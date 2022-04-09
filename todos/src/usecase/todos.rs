@@ -1,5 +1,5 @@
 use crate::domain::{Task, TaskFilter, TaskId, TaskRepository};
-
+use anyhow::Result;
 pub struct UseCase<Repo: TaskRepository> {
     repository: Repo,
 }
@@ -9,19 +9,19 @@ impl<Repo: TaskRepository> UseCase<Repo> {
         Self { repository }
     }
 
-    pub fn get_task_list(&self, filter: TaskFilter) -> Result<Vec<Task>, String> {
+    pub fn get_task_list(&self, filter: TaskFilter) -> Result<Vec<Task>> {
         self.repository.list(filter)
     }
 
-    pub fn add_task(&self, task: Task) -> Result<(), String> {
+    pub fn add_task(&self, task: Task) -> Result<()> {
         self.repository.insert(task)
     }
 
-    pub fn delete_task(&self, id: TaskId) -> Result<(), String> {
+    pub fn delete_task(&self, id: TaskId) -> Result<()> {
         self.repository.delete(id)
     }
 
-    pub fn update_task(&self, task: Task) -> Result<(), String> {
+    pub fn update_task(&self, task: Task) -> Result<()> {
         self.repository.update(task)
     }
 }

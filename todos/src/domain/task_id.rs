@@ -1,7 +1,7 @@
+use anyhow::{anyhow, Error};
 use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
-
 #[derive(Debug, PartialEq, Default, Clone)]
 pub struct TaskId(Uuid);
 
@@ -12,11 +12,11 @@ impl TaskId {
 }
 
 impl FromStr for TaskId {
-    type Err = String;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match Uuid::from_str(s) {
             Ok(id) => Ok(TaskId(id)),
-            Err(e) => Err(e.to_string()),
+            Err(e) => Err(anyhow!(e)),
         }
     }
 }

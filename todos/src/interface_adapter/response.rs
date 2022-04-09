@@ -1,7 +1,7 @@
 use crate::domain::{Task, TaskBody, TaskId, TaskState};
+use anyhow::Error;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct TaskResponse {
     pub id: String,
@@ -20,7 +20,7 @@ impl From<Task> for TaskResponse {
 }
 
 impl TryFrom<TaskResponse> for Task {
-    type Error = String;
+    type Error = Error;
     fn try_from(task: TaskResponse) -> Result<Self, Self::Error> {
         let id = TaskId::from_str(&task.id)?;
         let body = TaskBody::from_str(&task.body)?;

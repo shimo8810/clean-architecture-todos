@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Error};
 use std::fmt;
 use std::str::FromStr;
 
@@ -19,12 +20,12 @@ impl fmt::Display for TaskState {
 }
 
 impl FromStr for TaskState {
-    type Err = String;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match &*s.to_lowercase() {
             "active" => Ok(Self::Active),
             "completed" => Ok(Self::Completed),
-            _ => Err("incorrect string value".to_string()),
+            _ => Err(anyhow!("incorrect string value")),
         }
     }
 }

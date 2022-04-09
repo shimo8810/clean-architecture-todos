@@ -1,5 +1,6 @@
 use crate::domain::TaskRepository;
 use crate::domain::{Task, TaskFilter, TaskId};
+use anyhow::Result;
 use std::sync::Mutex;
 #[derive(Debug)]
 pub struct MemoTaskReposiory {
@@ -20,7 +21,7 @@ impl Default for MemoTaskReposiory {
 }
 
 impl TaskRepository for MemoTaskReposiory {
-    fn list(&self, filter: TaskFilter) -> Result<Vec<Task>, String> {
+    fn list(&self, filter: TaskFilter) -> Result<Vec<Task>> {
         Ok(match filter {
             TaskFilter::All => self.tasks.lock().unwrap().clone(),
             TaskFilter::StateEq(state) => self
@@ -34,12 +35,12 @@ impl TaskRepository for MemoTaskReposiory {
         })
     }
 
-    fn insert(&self, task: Task) -> Result<(), String> {
+    fn insert(&self, task: Task) -> Result<()> {
         self.tasks.lock().unwrap().push(task);
         Ok(())
     }
 
-    fn delete(&self, id: TaskId) -> Result<(), String> {
+    fn delete(&self, id: TaskId) -> Result<()> {
         if let Some(idx) = self
             .tasks
             .lock()
@@ -53,7 +54,7 @@ impl TaskRepository for MemoTaskReposiory {
         Ok(())
     }
 
-    fn update(&self, task: Task) -> Result<(), String> {
+    fn update(&self, task: Task) -> Result<()> {
         if let Some(idx) = self
             .tasks
             .lock()

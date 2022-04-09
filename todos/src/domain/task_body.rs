@@ -1,16 +1,16 @@
+use anyhow::{anyhow, Error, Result};
 use std::fmt;
 use std::str::FromStr;
-
 const MAX_LENGTH: usize = 140;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TaskBody(String);
 
 impl TaskBody {
-    pub fn new<S: ToString>(body: S) -> Result<Self, String> {
+    pub fn new<S: ToString>(body: S) -> Result<Self> {
         let body = body.to_string();
         if body.len() > MAX_LENGTH {
-            Err("too long todo's body".to_string())
+            Err(anyhow!("too long todo's body".to_string()))
         } else {
             Ok(Self(body))
         }
@@ -18,7 +18,7 @@ impl TaskBody {
 }
 
 impl FromStr for TaskBody {
-    type Err = String;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         TaskBody::new(s)
     }

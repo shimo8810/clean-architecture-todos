@@ -4,7 +4,10 @@ use crate::interface_adapter::request::{
 };
 use crate::interface_adapter::response::TaskResponse;
 use crate::usecase::todos::UseCase;
+use anyhow::Result;
+
 use std::str::FromStr;
+
 pub struct Controller<Repo: TaskRepository> {
     usecase: UseCase<Repo>,
 }
@@ -15,7 +18,7 @@ impl<Repo: TaskRepository> Controller<Repo> {
         Self { usecase }
     }
 
-    pub fn get_task_list(&self, req: GetTaskRequest) -> Result<Vec<TaskResponse>, String> {
+    pub fn get_task_list(&self, req: GetTaskRequest) -> Result<Vec<TaskResponse>> {
         let filter = req
             .filter
             .map_or(TaskFilter::All, |s| match &*s.to_lowercase() {
@@ -29,18 +32,18 @@ impl<Repo: TaskRepository> Controller<Repo> {
             .map(|tasks| tasks.into_iter().map(|task| task.into()).collect())
     }
 
-    pub fn add_task(&self, req: AddTaskRequest) -> Result<(), String> {
+    pub fn add_task(&self, req: AddTaskRequest) -> Result<()> {
         let body = TaskBody::from_str(&req.body)?;
         let task = Task::new(body);
         self.usecase.add_task(task)
     }
 
-    pub fn delete_task(&self, req: DeleteTaskRequest) -> Result<(), String> {
+    pub fn delete_task(&self, req: DeleteTaskRequest) -> Result<()> {
         let id = TaskId::from_str(&req.id)?;
         self.usecase.delete_task(id)
     }
 
-    pub fn update_task(&self, req: UpdateTaskRequest) -> Result<(), String> {
+    pub fn update_task(&self, req: UpdateTaskRequest) -> Result<()> {
         let id = TaskId::from_str(&req.id)?;
         let body = TaskBody::from_str(&req.body)?;
         let state = TaskState::from_str(&req.state)?;
