@@ -3,16 +3,9 @@ use crate::domain::TaskRepository;
 use crate::interface_adapter::controller::Controller;
 use actix_web::{web, App, HttpServer};
 use anyhow::Result;
-use std::sync::Mutex;
 
-pub struct State<R: TaskRepository> {
-    controller: Mutex<Controller<R>>,
-}
-
-pub async fn run_server<R: TaskRepository + Send + Clone + 'static>(repo: R) -> Result<()> {
-    let state = web::Data::new(State {
-        controller: Mutex::new(Controller::new(repo)),
-    });
+pub async fn run_server<R: TaskRepository + Send + Sync + 'static>(repo: R) -> Result<()> {
+    let state = web::Data::new(Controller::new(repo));
 
     HttpServer::new(move || {
         App::new().app_data(state.clone()).service(

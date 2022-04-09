@@ -9,9 +9,6 @@ pub enum TaskState {
 
 impl fmt::Display for TaskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // let str = match self {
-
-        // }
         let str = match *self {
             Self::Active => "Active",
             Self::Completed => "Completed",
@@ -23,10 +20,10 @@ impl fmt::Display for TaskState {
 
 impl FromStr for TaskState {
     type Err = String;
-    fn from_str(x: &str) -> Result<Self, Self::Err> {
-        match x {
-            "Active" => Ok(Self::Active),
-            "Completed" => Ok(Self::Active),
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match &*s.to_lowercase() {
+            "active" => Ok(Self::Active),
+            "completed" => Ok(Self::Completed),
             _ => Err("incorrect string value".to_string()),
         }
     }
