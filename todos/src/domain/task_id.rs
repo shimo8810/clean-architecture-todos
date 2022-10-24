@@ -1,22 +1,24 @@
-use anyhow::{anyhow, Error};
 use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
-#[derive(Debug, PartialEq, Default, Clone)]
+
+use crate::domain::error::DomainError;
+
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct TaskId(Uuid);
 
 impl TaskId {
-    pub fn new() -> Self {
-        TaskId(Uuid::new_v4())
+    pub fn new(id: Uuid) -> Self {
+        Self(id)
     }
 }
 
 impl FromStr for TaskId {
-    type Err = Error;
+    type Err = DomainError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match Uuid::from_str(s) {
             Ok(id) => Ok(TaskId(id)),
-            Err(e) => Err(anyhow!(e)),
+            Err(e) => Err(DomainError::Other(anyhow::anyhow!(e))),
         }
     }
 }
@@ -33,12 +35,10 @@ mod tests {
     use super::*;
     #[test]
     fn create_id() {
-        let id1 = TaskId::new();
-        let id2 = TaskId::default();
-        let id3 = TaskId::default();
-        assert_ne!(id1, id2);
-        assert_eq!(id2, id3);
-        assert_ne!(id3, id1);
+        let uid1 = Uuid::new_v4();
+        let uid2 = Uuid::new_v4();
+        assert_eq!(TaskId::new(uid1), TaskId::new(uid1));
+        assert_ne!(TaskId::new(uid1), TaskId::new(uid2));
     }
 
     #[test]
