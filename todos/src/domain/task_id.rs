@@ -18,7 +18,7 @@ impl FromStr for TaskId {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match Uuid::from_str(s) {
             Ok(id) => Ok(TaskId(id)),
-            Err(e) => Err(DomainError::Other(anyhow::anyhow!(e))),
+            Err(e) => Err(DomainError::Validation(e.to_string())),
         }
     }
 }
