@@ -1,16 +1,18 @@
-use anyhow::{anyhow, Error, Result};
 use std::fmt;
 use std::str::FromStr;
+
+use crate::domain::error::DomainError;
+
 const MAX_LENGTH: usize = 140;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct TaskBody(String);
 
 impl TaskBody {
-    pub fn new<S: ToString>(body: S) -> Result<Self> {
+    pub fn new<S: ToString>(body: S) -> Result<Self, DomainError> {
         let body = body.to_string();
         if body.len() > MAX_LENGTH {
-            Err(anyhow!("too long todo's body".to_string()))
+            Err(DomainError::Validation("too long todo's body".to_string()))
         } else {
             Ok(Self(body))
         }
@@ -18,7 +20,7 @@ impl TaskBody {
 }
 
 impl FromStr for TaskBody {
-    type Err = Error;
+    type Err = DomainError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         TaskBody::new(s)
     }
