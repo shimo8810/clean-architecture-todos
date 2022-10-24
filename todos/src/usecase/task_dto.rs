@@ -12,10 +12,6 @@ pub struct TaskDto {
 
 impl From<Task> for TaskDto {
     fn from(task: Task) -> Self {
-        let id = task.id.to_string();
-        let body = task.body.to_string();
-        let state = task.state.to_bool();
-
         Self {
             id: task.id.to_string(),
             body: task.body.to_string(),
