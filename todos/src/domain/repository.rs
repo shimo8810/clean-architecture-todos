@@ -1,11 +1,12 @@
-use super::{Task, TaskFilter, TaskId};
-use anyhow::Result;
+use super::{error::DomainError, task::Task, task_id::TaskId};
+
+#[mockall::automock]
 pub trait TaskRepository {
-    fn list(&self, filter: TaskFilter) -> Result<Vec<Task>>;
+    fn list(&self) -> Result<Vec<Task>, DomainError>;
 
-    fn insert(&self, task: Task) -> Result<()>;
+    fn insert(&self, task: &Task) -> Result<(), DomainError>;
 
-    fn delete(&self, id: TaskId) -> Result<()>;
+    fn delete(&self, id: &TaskId) -> Result<(), DomainError>;
 
-    fn update(&self, task: Task) -> Result<()>;
+    fn update(&self, task: &Task) -> Result<(), DomainError>;
 }
