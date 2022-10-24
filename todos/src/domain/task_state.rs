@@ -1,31 +1,42 @@
-use anyhow::{anyhow, Error};
-use std::fmt;
-use std::str::FromStr;
-
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TaskState {
     Active,
     Completed,
 }
 
-impl fmt::Display for TaskState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let str = match *self {
-            Self::Active => "Active",
-            Self::Completed => "Completed",
-        };
-
-        write!(f, "{}", str)
+impl TaskState {
+    pub fn to_bool(&self) -> bool {
+        match self {
+            TaskState::Active => false,
+            TaskState::Completed => true,
+        }
     }
 }
 
-impl FromStr for TaskState {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match &*s.to_lowercase() {
-            "active" => Ok(Self::Active),
-            "completed" => Ok(Self::Completed),
-            _ => Err(anyhow!("incorrect string value")),
+impl From<bool> for TaskState {
+    fn from(state: bool) -> Self {
+        if state {
+            TaskState::Completed
+        } else {
+            TaskState::Active
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create_state() {
+        assert_ne!(TaskState::Active, TaskState::Completed);
+    }
+
+    #[test]
+    fn create_from_bool() {
+        assert_eq!(TaskState::from(true), TaskState::Completed);
+        assert_eq!(TaskState::from(false), TaskState::Active);
+        assert!(!TaskState::Active.to_bool());
+        assert!(TaskState::Completed.to_bool());
     }
 }
