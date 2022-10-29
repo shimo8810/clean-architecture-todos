@@ -13,11 +13,6 @@ pub struct Task {
     pub state: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Queryable)]
-pub struct NewTask {
-    pub title: String,
-}
-
 impl TryFrom<Task> for domain::Task {
     type Error = DomainError;
     fn try_from(task: Task) -> Result<Self, Self::Error> {
