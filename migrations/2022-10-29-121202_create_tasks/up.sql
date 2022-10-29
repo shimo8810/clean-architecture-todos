@@ -1,0 +1,7 @@
+-- Your SQL goes here
+
+CREATE TABLE tasks (
+  id VARCHAR PRIMARY KEY,
+  body TEXT NOT NULL,
+  state BOOLEAN NOT NULL DEFAULT FALSE
+)
