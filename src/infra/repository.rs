@@ -8,7 +8,7 @@ use diesel::{
     PgConnection, RunQueryDsl,
 };
 
-type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
+pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[derive(Debug, Clone)]
 pub struct PgTaskRepository {
