@@ -7,4 +7,6 @@ pub trait TaskRepository {
     fn insert(&self, task: &Task) -> Result<(), DomainError>;
 
     fn delete(&self, id: &TaskId) -> Result<(), DomainError>;
+
+    fn update(&self, task: &Task) -> Result<(), DomainError>;
 }

@@ -45,4 +45,9 @@ impl<R: TaskRepository> UseCase<R> {
         self.repository.delete(&id)?;
         Ok(())
     }
+
+    pub fn update_task(&self, task: TaskDto) -> Result<(), UseCaseError> {
+        self.repository.update(&Task::try_from(task)?)?;
+        Ok(())
+    }
 }
