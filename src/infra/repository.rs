@@ -54,8 +54,4 @@ impl domain::TaskRepository for PgTaskRepository {
 
         Ok(())
     }
-
-    fn update(&self, task: &domain::Task) -> Result<(), crate::domain::error::DomainError> {
-        todo!()
-    }
 }

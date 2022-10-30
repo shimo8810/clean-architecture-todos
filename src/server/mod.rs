@@ -19,7 +19,7 @@ async fn list_tasks<R: TaskRepository>(
     Ok(HttpResponse::Ok().json(list))
 }
 
-async fn post_tasks<R: TaskRepository>(
+async fn post_task<R: TaskRepository>(
     data: web::Json<NewTask>,
     usecase: web::Data<UseCase<R>>,
 ) -> Result<HttpResponse, Error> {
@@ -30,6 +30,18 @@ async fn post_tasks<R: TaskRepository>(
     Ok(HttpResponse::Ok().json(task))
 }
 
+async fn delete_task<R: TaskRepository>(
+    id: web::Path<String>,
+    usecase: web::Data<UseCase<R>>,
+) -> Result<HttpResponse, Error> {
+    let id = id.into_inner();
+    usecase
+        .delete_task(&id)
+        .map_err(actix_web::error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().body(format!("delete id: {}", id)))
+}
+
 #[actix_web::main]
 pub async fn run<R: TaskRepository + Clone + Send + Sync + 'static>(
     usecase: UseCase<R>,
@@ -38,7 +50,8 @@ pub async fn run<R: TaskRepository + Clone + Send + Sync + 'static>(
         App::new()
             .app_data(web::Data::new(usecase.clone()))
             .route("/tasks", web::get().to(list_tasks::<R>))
-            .route("/tasks", web::post().to(post_tasks::<R>))
+            .route("/tasks", web::post().to(post_task::<R>))
+            .route("tasks/{id}", web::delete().to(delete_task::<R>))
     })
     .bind(("0.0.0.0", 8080))?
     .run()
