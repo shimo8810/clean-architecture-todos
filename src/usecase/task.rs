@@ -9,6 +9,7 @@ use crate::domain::{
     task_state::TaskState,
 };
 
+#[derive(Debug, Clone)]
 pub struct UseCase<R: TaskRepository> {
     repository: R,
 }
@@ -27,7 +28,7 @@ impl<R: TaskRepository> UseCase<R> {
             .collect())
     }
 
-    pub fn add_task(&self, body: &str) -> Result<(), UseCaseError> {
+    pub fn add_task(&self, body: &str) -> Result<TaskDto, UseCaseError> {
         let task = Task::new(
             TaskId::new(Uuid::new_v4()),
             TaskBody::new(body)?,
@@ -36,7 +37,7 @@ impl<R: TaskRepository> UseCase<R> {
 
         self.repository.insert(&task)?;
 
-        Ok(())
+        Ok(task.into())
     }
 
     pub fn delete_task(&self, id: &str) -> Result<(), UseCaseError> {
