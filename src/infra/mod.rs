@@ -3,7 +3,6 @@ pub mod model;
 pub mod repository;
 pub mod schema;
 
-pub use repository::DbPool;
 pub use repository::PgTaskRepository;
 
 use diesel::{
