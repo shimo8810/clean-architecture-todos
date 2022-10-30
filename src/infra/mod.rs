@@ -11,7 +11,9 @@ use diesel::{
     PgConnection,
 };
 
-pub fn establish_connection(database_url: &str) -> PgTaskRepository {
+pub fn establish_connection() -> PgTaskRepository {
+    dotenvy::dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool = r2d2::Pool::builder()
         .build(manager)
