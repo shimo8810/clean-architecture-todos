@@ -1,9 +1,10 @@
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
 use super::error::UseCaseError;
 use crate::domain::{task::Task, task_body::TaskBody, task_id::TaskId, task_state::TaskState};
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct TaskDto {
     id: String,
     body: String,
