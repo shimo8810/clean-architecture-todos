@@ -56,6 +56,19 @@ impl domain::TaskRepository for PgTaskRepository {
     }
 
     fn update(&self, task: &domain::Task) -> Result<(), crate::domain::error::DomainError> {
-        todo!()
+        use diesel::ExpressionMethods;
+        use schema::tasks;
+
+        let mut conn = self.pool.get()?;
+
+        let i = task.id.to_string();
+        let b = task.body.to_string();
+        let s = task.state.to_bool();
+
+        diesel::update(tasks::table.find(i))
+            .set((tasks::body.eq(b), tasks::state.eq(s)))
+            .get_result::<model::Task>(&mut conn)?;
+
+        Ok(())
     }
 }

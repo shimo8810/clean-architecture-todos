@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::TaskRepository;
 use crate::usecase::task::UseCase;
+use crate::usecase::task_dto::TaskDto;
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 struct NewTask {
@@ -42,6 +43,19 @@ async fn delete_task<R: TaskRepository>(
     Ok(HttpResponse::Ok().body(format!("delete id: {}", id)))
 }
 
+async fn update_task<R: TaskRepository>(
+    task: web::Json<TaskDto>,
+    usecase: web::Data<UseCase<R>>,
+) -> Result<HttpResponse, Error> {
+    let task = task.into_inner();
+
+    usecase
+        .update_task(task)
+        .map_err(actix_web::error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().body("update"))
+}
+
 #[actix_web::main]
 pub async fn run<R: TaskRepository + Clone + Send + Sync + 'static>(
     usecase: UseCase<R>,
@@ -51,6 +65,7 @@ pub async fn run<R: TaskRepository + Clone + Send + Sync + 'static>(
             .app_data(web::Data::new(usecase.clone()))
             .route("/tasks", web::get().to(list_tasks::<R>))
             .route("/tasks", web::post().to(post_task::<R>))
+            .route("/tasks", web::put().to(update_task::<R>))
             .route("tasks/{id}", web::delete().to(delete_task::<R>))
     })
     .bind(("0.0.0.0", 8080))?
