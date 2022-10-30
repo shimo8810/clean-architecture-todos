@@ -9,6 +9,7 @@ edition = "2021"
 actix-web = "4.2.1"
 anyhow = "1.0.56"
 diesel = { version = "2.0.2", features = ["r2d2", "postgres"] }
+dotenvy = "0.15.6"
 mockall = "0.11.3"
 serde = { version = "1.0.136", features = ["derive"] }
 thiserror = "1.0.37"
