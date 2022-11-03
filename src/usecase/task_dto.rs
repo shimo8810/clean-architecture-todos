@@ -31,3 +31,9 @@ impl TryFrom<TaskDto> for Task {
         ))
     }
 }
+
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
+pub struct NewTaskDto {
+    pub body: String,
+    pub state: bool,
+}

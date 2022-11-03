@@ -3,7 +3,7 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use super::error::UseCaseError;
-use super::task_dto::TaskDto;
+use super::task_dto::{NewTaskDto, TaskDto};
 use crate::domain::{
     repository::TaskRepository, task::Task, task_body::TaskBody, task_id::TaskId,
     task_state::TaskState,
@@ -46,8 +46,14 @@ impl<R: TaskRepository> UseCase<R> {
         Ok(())
     }
 
-    pub fn update_task(&self, task: TaskDto) -> Result<(), UseCaseError> {
-        self.repository.update(&Task::try_from(task)?)?;
-        Ok(())
+    pub fn update_task(&self, id: &str, new_task: NewTaskDto) -> Result<TaskDto, UseCaseError> {
+        let id = TaskId::from_str(id)?;
+        let body = TaskBody::from_str(&new_task.body)?;
+        let state = TaskState::from(new_task.state);
+        let task = Task::new(id, body, state);
+
+        self.repository.update(&task)?;
+
+        Ok(task.into())
     }
 }
