@@ -1,14 +1,8 @@
 use actix_web::{web, App, Error, HttpResponse, HttpServer};
-use serde::{Deserialize, Serialize};
 
 use crate::domain::TaskRepository;
 use crate::usecase::task::UseCase;
-use crate::usecase::task_dto::NewTaskDto;
-
-#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
-struct NewTask {
-    body: String,
-}
+use crate::usecase::task_dto::{NewTaskDto, UpdateTaskDto};
 
 async fn list_tasks<R: TaskRepository>(
     usecase: web::Data<UseCase<R>>,
@@ -21,11 +15,11 @@ async fn list_tasks<R: TaskRepository>(
 }
 
 async fn post_task<R: TaskRepository>(
-    data: web::Json<NewTask>,
+    data: web::Json<NewTaskDto>,
     usecase: web::Data<UseCase<R>>,
 ) -> Result<HttpResponse, Error> {
     let task = usecase
-        .add_task(&data.body)
+        .add_task(data.into_inner())
         .map_err(actix_web::error::ErrorInternalServerError)?;
 
     Ok(HttpResponse::Ok().json(task))
@@ -45,7 +39,7 @@ async fn delete_task<R: TaskRepository>(
 
 async fn update_task<R: TaskRepository>(
     id: web::Path<String>,
-    task: web::Json<NewTaskDto>,
+    task: web::Json<UpdateTaskDto>,
     usecase: web::Data<UseCase<R>>,
 ) -> Result<HttpResponse, Error> {
     let task = task.into_inner();

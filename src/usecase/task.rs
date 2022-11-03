@@ -3,7 +3,7 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use super::error::UseCaseError;
-use super::task_dto::{NewTaskDto, TaskDto};
+use super::task_dto::{NewTaskDto, TaskDto, UpdateTaskDto};
 use crate::domain::{
     repository::TaskRepository, task::Task, task_body::TaskBody, task_id::TaskId,
     task_state::TaskState,
@@ -28,10 +28,10 @@ impl<R: TaskRepository> UseCase<R> {
             .collect())
     }
 
-    pub fn add_task(&self, body: &str) -> Result<TaskDto, UseCaseError> {
+    pub fn add_task(&self, new_task: NewTaskDto) -> Result<TaskDto, UseCaseError> {
         let task = Task::new(
             TaskId::new(Uuid::new_v4()),
-            TaskBody::new(body)?,
+            TaskBody::new(new_task.body)?,
             TaskState::Active,
         );
 
@@ -46,10 +46,14 @@ impl<R: TaskRepository> UseCase<R> {
         Ok(())
     }
 
-    pub fn update_task(&self, id: &str, new_task: NewTaskDto) -> Result<TaskDto, UseCaseError> {
+    pub fn update_task(
+        &self,
+        id: &str,
+        update_task: UpdateTaskDto,
+    ) -> Result<TaskDto, UseCaseError> {
         let id = TaskId::from_str(id)?;
-        let body = TaskBody::from_str(&new_task.body)?;
-        let state = TaskState::from(new_task.state);
+        let body = TaskBody::from_str(&update_task.body)?;
+        let state = TaskState::from(update_task.state);
         let task = Task::new(id, body, state);
 
         self.repository.update(&task)?;
