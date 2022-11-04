@@ -28,10 +28,10 @@ impl<R: TaskRepository> UseCase<R> {
             .collect())
     }
 
-    pub fn add_task(&self, new_task: NewTaskDto) -> Result<TaskDto, UseCaseError> {
+    pub fn add_task(&self, new_task: &NewTaskDto) -> Result<TaskDto, UseCaseError> {
         let task = Task::new(
             TaskId::new(Uuid::new_v4()),
-            TaskBody::new(new_task.body)?,
+            TaskBody::new(&new_task.body)?,
             TaskState::Active,
         );
 
@@ -49,7 +49,7 @@ impl<R: TaskRepository> UseCase<R> {
     pub fn update_task(
         &self,
         id: &str,
-        update_task: UpdateTaskDto,
+        update_task: &UpdateTaskDto,
     ) -> Result<TaskDto, UseCaseError> {
         let id = TaskId::from_str(id)?;
         let body = TaskBody::from_str(&update_task.body)?;

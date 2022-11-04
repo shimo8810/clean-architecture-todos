@@ -1,3 +1,4 @@
+pub mod error;
 pub mod routers;
 
 use actix_web::{web, App, HttpServer};
