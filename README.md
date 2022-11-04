@@ -1,6 +1,6 @@
 # Clean Architecture ToDos API
 
-Clean Architecture にしたがってTODO-APIを実装してみた.
+Clean Architecture にしたがってRustでTODO-APIを実装してみた.
 
 - `domain`: ドメイン層, エンティティや値オブジェクト,リポジトリのトレイトが実装されている.
 - `usecase`: ユースケース層, アプリケーションサービスやDTOなどが実装されている.
@@ -17,7 +17,7 @@ cargo run
 ### Create
 ```bash
 $ curl -X POST localhost:8080/tasks -H "Content-Type: application/json" -d '{"body": "花に水をあげる"}'
-{"id":"5e4e30cf-5e9c-4611-bb5e-400cfed55a2a","body":"花に水をあげる","state":false}⏎
+{"id":"5e4e30cf-5e9c-4611-bb5e-400cfed55a2a","body":"花に水をあげる","state":false}
 ```
 ### Read
 ```bash
@@ -26,8 +26,8 @@ $ curl -X GET localhost:8080/tasks
 ```
 ### Update
 ```bash
-$ curl -X PUT localhost:8080/tasks -H "Content-Type: application/json" -d '{"id": "5e4e30cf-5e9c-4611-bb5e-400cfed55a2a", "body": "花に水をあげる", "state": true}'
-update
+$ curl -X PUT localhost:8080/tasks/5e4e30cf-5e9c-4611-bb5e-400cfed55a2a -H "Content-Type: application/json" -d '{"body": "花に水をあげる", "state": true}'
+{"id": "5e4e30cf-5e9c-4611-bb5e-400cfed55a2a", "body": "花に水をあげる", "state": true}
 ```
 ### Remove
 ```bash
