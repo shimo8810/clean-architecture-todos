@@ -50,7 +50,9 @@ impl domain::TaskRepository for PgTaskRepository {
     fn delete(&self, id: &domain::TaskId) -> Result<(), crate::domain::error::DomainError> {
         let mut conn = self.pool.get()?;
         let id = id.to_string();
-        diesel::delete(schema::tasks::table.find(id)).execute(&mut conn)?;
+        diesel::delete(schema::tasks::table.find(id.clone()))
+            .get_result::<model::Task>(&mut conn)
+            .map_err(|_| crate::domain::error::DomainError::NotFound(id))?;
 
         Ok(())
     }
@@ -61,13 +63,14 @@ impl domain::TaskRepository for PgTaskRepository {
 
         let mut conn = self.pool.get()?;
 
-        let i = task.id.to_string();
+        let id = task.id.to_string();
         let b = task.body.to_string();
         let s = task.state.to_bool();
 
-        diesel::update(tasks::table.find(i))
+        diesel::update(tasks::table.find(id.clone()))
             .set((tasks::body.eq(b), tasks::state.eq(s)))
-            .get_result::<model::Task>(&mut conn)?;
+            .get_result::<model::Task>(&mut conn)
+            .map_err(|_| crate::domain::error::DomainError::NotFound(id))?;
 
         Ok(())
     }
